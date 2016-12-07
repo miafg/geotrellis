@@ -8,3 +8,4 @@
     AXIS["Geocentric X", GEOCENTRIC_X] 
     AXIS["Plant East", NORTH_EAST]
     AXIS["Plant North", NORTH_WEST]
+3. At line 5591 of epsg.properties removed two lines of comments
