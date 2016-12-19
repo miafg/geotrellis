@@ -14,7 +14,7 @@ case class Spheroid(name: String, semiMajorAxis: AnyVal, flatteningInverse: Doub
 
 case class Datum(name: String, spheroid: Spheroid, towsg: Option[ToWgs84], authority: Option[Authority]) extends Tree
 
-case class Unit(name: String, conversionFact: Number, authority: Option[Authority]) extends Tree
+case class UnitField(name: String, conversionFact: Number, authority: Option[Authority]) extends Tree
 
 case class PrimeM(name: String, longitude: Double, authority: Option[Authority]) extends Tree
 
@@ -22,22 +22,20 @@ case class VertDatum(name: String, datumType: Number, authority: Option[Authorit
 
 case class LocalDatum(name: String, datumType: Number, authority: Option[Authority]) extends Tree
 
-case class Geogcs(name: String, datum: Datum, primeM: PrimeM, angularUnit: Unit, axes: Option[List[Axis]], authority: Option[Authority]) extends Tree
+case class Geogcs(name: String, datum: Datum, primeM: PrimeM, angularUnit: UnitField, axes: Option[List[Axis]], authority: Option[Authority]) extends Tree
 
 case class Projection(name: String, authority: Option[Authority]) extends Tree
 
-case class Projcs(name: String, geogcs: Geogcs, projection: Projection, params: Option[List[Parameter]], linearUnit: Unit, twinAxis: Option[TwinAxis], authority: Option[Authority]) extends Tree
+case class Projcs(name: String, geogcs: Geogcs, projection: Projection, params: Option[List[Parameter]], linearUnit: UnitField, twinAxis: Option[TwinAxis], authority: Option[Authority]) extends Tree
 
-case class VertCS(name: String, vertDatum: VertDatum, unit: Unit, axis: Option[Axis], authority: Option[Authority]) extends Tree
+case class VertCS(name: String, vertDatum: VertDatum, unit: UnitField, axis: Option[Axis], authority: Option[Authority]) extends Tree
 
-case class LocalCS(name: String, localDatum: LocalDatum, unit: Unit, axisList: List[Axis], authority: Option[Authority]) extends Tree
+case class LocalCS(name: String, localDatum: LocalDatum, unit: UnitField, axisList: List[Axis], authority: Option[Authority]) extends Tree
 
-case class Geoccs(name: String, datum: Datum, primeM: PrimeM, unit: Unit, axis: Option[List[Axis]], authority: Option[Authority]) extends Tree
+case class Geoccs(name: String, datum: Datum, primeM: PrimeM, unit: UnitField, axis: Option[List[Axis]], authority: Option[Authority]) extends Tree
 
 case class CompDCS(name: String, head: Any, tail: Any, authority: Option[Authority]) extends Tree
 
 trait Leaf extends Tree
-
-case class Node (label: String, children: Set[Tree] = Set()) extends Tree
 
 trait Tree
