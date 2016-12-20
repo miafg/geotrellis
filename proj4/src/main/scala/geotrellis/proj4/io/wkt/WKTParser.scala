@@ -8,7 +8,7 @@ object WKTParser extends RegexParsers {
 
   def symbol: Parser[String] = """[A-Za-z0-9_]+""".r
 
-  def string: Parser[String] = "\"" ~> """[^\"]+""".r <~ "\"" //"""[A-Za-z()/+ 0-9\-&'\,\.\*\?\_]+""".r
+  def string: Parser[String] = "\"" ~> """[A-Za-z=()/+ 0-9-&',.*?\_]+""".r <~ "\""
 
   def double: Parser[Double] =("""[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?""".r | """[-+]?[0-9]*\.?[0-9]+""".r) map (_.toDouble)
 
@@ -99,5 +99,17 @@ object WKTParser extends RegexParsers {
   }
 
   def parseWKT: Parser[Tree] = localCS | projcs | geogcs | geoccs | compdcs | vertcs
+
+  def apply(wktString: String) : Tree = {
+    parseAll(parseWKT, wktString) match {
+      case Success(wktObject, _) =>
+        wktObject
+      case Failure(msg, tail) =>
+        throw new IllegalArgumentException(msg)
+      case Error(msg, _) => {
+        throw new IllegalArgumentException(msg)
+      }
+    }
+  }
 
 }

@@ -530,7 +530,6 @@ class WKTParserTest extends FunSpec {
     }
   }
 
-
   it("Should return a Projcs object special one") {
     import WKTParser._
     val authProjcs = new Authority("EPSG","22033")
@@ -568,7 +567,7 @@ class WKTParserTest extends FunSpec {
   }
 
   it("Should contain NAD27 / Polar Stereographic / CM=-98") {
-    import WKTParser._
+    import WKTRegistry._
     val datSpheroid = new Spheroid("Clarke 1866", 6378206.4, 294.978698213901, None)
     val toWgs84 = new ToWgs84(List(-9, 151, 185))
     val datum = new Datum("North_American_Datum_1927", datSpheroid, Some(toWgs84), None)
@@ -584,10 +583,12 @@ class WKTParserTest extends FunSpec {
     val unitField = new UnitField("Meter", 1, None)
     val auth = new Authority("EPSG", "42301")
     val expected = new Projcs("NAD27 / Polar Stereographic / CM=-98", geogcs, projection, Some(List(param1, param2, param3, param4, param5)), unitField, None, Some(auth))
-    assert(WKTRegistry.containsObject(expected))
+    parseWktEpsgResource()
+    assert(containsObject(expected))
   }
 
   it("Should return a contain the Geoccs object") {
+    import WKTRegistry._
     val spherAuth = new Authority("EPSG","7019")
     val spheroid = new Spheroid("GRS 1980", 6378137.0, 298.257222101, Some(spherAuth))
     val toWgs84 = new ToWgs84(List(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
@@ -600,7 +601,35 @@ class WKTParserTest extends FunSpec {
     val axis3 = new Axis("Geocentric Z", "GEOCENTRIC_Z")
     val auth = new Authority("EPSG","4079")
     val expected = new Geoccs("REGCAN95", datum, primeM, unitField, Some(List(axis1, axis2, axis3)), Some(auth))
+    parseWktEpsgResource()
     assert(WKTRegistry.containsObject(expected))
+  }
+
+  it("Should parse NAD83(CSRS98) / New Brunswick Stereo") {
+    import WKTRegistry._
+    val spherAuth = new Authority("EPSG","7019")
+    val datumSpher = new Spheroid("GRS 1980", 6378137.0, 298.257222101, Some(spherAuth))
+    val toWgs84 = new ToWgs84(List(0, 0, 0))
+    val datumAuth = new Authority("EPSG","6140")
+    val geoDatum = new Datum("NAD83_Canadian_Spatial_Reference_System", datumSpher, Some(toWgs84), Some(datumAuth))
+    val primeMAuth = new Authority("EPSG","8901")
+    val primeM = new PrimeM("Greenwich", 0, Some(primeMAuth))
+    val unitAuth = new Authority("EPSG","9108")
+    val unitField = new UnitField("degree", 0.0174532925199433, Some(unitAuth))
+    val geoAuth = new Authority("EPSG","4140")
+    val geogcs = new Geogcs("NAD83(CSRS98)", geoDatum, primeM, unitField, None, Some(geoAuth))
+    val projection = new Projection("Oblique_Stereographic", None)
+    val param1 = new Parameter("latitude_of_origin", 46.5)
+    val param2 = new Parameter("central_meridian", -66.5)
+    val param3 = new Parameter("scale_factor", 0.999912)
+    val param4 = new Parameter("false_easting", 2500000.0)
+    val param5 = new Parameter("false_northing", 7500000.0)
+    val paramList = List(param1, param2, param3, param4, param5)
+    val unitProj = new UnitField("metre", 1.0, Some(new Authority("EPSG", "9001")))
+    val auth = new Authority("EPSG", "2036")
+    val expected = new Projcs("NAD83(CSRS98) / New Brunswick Stereo", geogcs, projection, Some(paramList), unitProj, None, Some(auth))
+    parseWktEpsgResource()
+    assert(containsObject(expected))
   }
 
 }
