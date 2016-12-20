@@ -60,8 +60,8 @@ object WKTParser extends RegexParsers {
     case _ ~ name ~ _ ~ datumType ~ _ ~ authority ~ _ => new VertDatum(name, datumType, authority)
   }
 
-  def geogcs: Parser[Geogcs] = """GEOGCS[""" ~ string ~ comma ~ datum ~ comma ~ primeM ~ comma ~ unitField ~ comma.? ~ getAxisList.? ~ comma.? ~ authority.? ~ """]""" map {
-    case _ ~ name ~ _ ~ datum ~ _ ~ primeM ~_ ~ unitField ~ _~ axes ~ _ ~ auth ~ _ => new Geogcs(name, datum, primeM, unitField, axes, auth)
+  def geogcs: Parser[GeogCS] = """GEOGCS[""" ~ string ~ comma ~ datum ~ comma ~ primeM ~ comma ~ unitField ~ comma.? ~ getAxisList.? ~ comma.? ~ authority.? ~ """]""" map {
+    case _ ~ name ~ _ ~ datum ~ _ ~ primeM ~_ ~ unitField ~ _~ axes ~ _ ~ auth ~ _ => new GeogCS(name, datum, primeM, unitField, axes, auth)
   }
 
   def projection: Parser[Projection] = """PROJECTION[""" ~ string ~ comma.? ~ authority.? ~ """]""" map {
@@ -70,8 +70,8 @@ object WKTParser extends RegexParsers {
 
   def parameterList: Parser[List[Parameter]] = ((parameter ~ comma.?)*) ^^ (_.map(_._1))
 
-  def projcs: Parser[Projcs] = """PROJCS[""" ~ string ~ comma ~ geogcs ~ comma ~ projection ~ comma.? ~ parameterList.? ~ comma.? ~ unitField ~ comma.? ~ twinAxis.? ~ comma.? ~ authority.? ~ """]""" map {
-    case _  ~ name ~  _ ~ geogcs ~ _ ~ projection ~ _ ~ params ~ _  ~ unitField ~ _ ~ twin ~ _ ~ authority ~ _ => new Projcs(name, geogcs, projection, params, unitField, twin, authority)
+  def projcs: Parser[ProjCS] = """PROJCS[""" ~ string ~ comma ~ geogcs ~ comma ~ projection ~ comma.? ~ parameterList.? ~ comma.? ~ unitField ~ comma.? ~ twinAxis.? ~ comma.? ~ authority.? ~ """]""" map {
+    case _  ~ name ~  _ ~ geogcs ~ _ ~ projection ~ _ ~ params ~ _  ~ unitField ~ _ ~ twin ~ _ ~ authority ~ _ => new ProjCS(name, geogcs, projection, params, unitField, twin, authority)
   }
 
   def vertcs: Parser[VertCS] = """VERT_CS[""" ~ string ~ comma ~ vertDatum ~ comma ~ unitField ~ comma.? ~ axis.? ~ comma.? ~ authority.? ~ """]""" map {
@@ -84,24 +84,24 @@ object WKTParser extends RegexParsers {
 
   def getAxisList: Parser[List[Axis]] = ((axis ~ comma.?)+)^^ (_.map(_._1))
 
-  def localCS: Parser[LocalCS] = """LOCAL_CS[""" ~ string ~ comma ~ localDatum ~ comma ~ unitField ~ comma ~ getAxisList ~ comma.? ~ authority.? ~ """]""" map {
+  def localcs: Parser[LocalCS] = """LOCAL_CS[""" ~ string ~ comma ~ localDatum ~ comma ~ unitField ~ comma ~ getAxisList ~ comma.? ~ authority.? ~ """]""" map {
     case _ ~ name ~ _ ~ localDatum ~_ ~ unitField ~ _ ~ axisList ~ _ ~ authority ~ _ => new LocalCS(name, localDatum, unitField, axisList, authority)
   }
 
-  def geoccs: Parser[Geoccs] = """GEOCCS[""" ~ string ~ comma ~ datum ~ comma ~ primeM ~ comma ~ unitField ~ comma.? ~ getAxisList.? ~ comma.? ~ authority.? ~ """]""" map {
-    case _ ~ name ~ _ ~ datum ~ _ ~ primeM ~ _ ~ unitField ~ _ ~ getAxisList ~ _ ~ auth ~ _ => new Geoccs(name, datum, primeM, unitField, getAxisList, auth)
+  def geoccs: Parser[GeocCS] = """GEOCCS[""" ~ string ~ comma ~ datum ~ comma ~ primeM ~ comma ~ unitField ~ comma.? ~ getAxisList.? ~ comma.? ~ authority.? ~ """]""" map {
+    case _ ~ name ~ _ ~ datum ~ _ ~ primeM ~ _ ~ unitField ~ _ ~ getAxisList ~ _ ~ auth ~ _ => new GeocCS(name, datum, primeM, unitField, getAxisList, auth)
   }
 
-  def coordinateSys: Parser[Any] = geogcs | geoccs | projcs | vertcs | compdcs | localCS
+  def coordinateSys: Parser[Any] = geogcs | geoccs | projcs | vertcs | compdcs | localcs
 
   def compdcs: Parser[CompDCS] = """COMPD_CS[""" ~ string ~ comma ~ coordinateSys ~ comma ~ coordinateSys ~ comma.? ~ authority.? ~ """]""" map {
     case _ ~ name ~ _ ~ head ~ _ ~ tail ~ _ ~ auth ~ _ => new CompDCS(name, head, tail, auth)
   }
 
-  def parseWKT: Parser[Tree] = localCS | projcs | geogcs | geoccs | compdcs | vertcs
+  def wktCS: Parser[WktCS] = localcs | projcs | geogcs | geoccs | compdcs | vertcs
 
-  def apply(wktString: String) : Tree = {
-    parseAll(parseWKT, wktString) match {
+  def apply(wktString: String) : WktCS = {
+    parseAll(wktCS, wktString) match {
       case Success(wktObject, _) =>
         wktObject
       case Failure(msg, tail) =>

@@ -307,7 +307,7 @@ class WKTParserTest extends FunSpec {
     val unitField = new UnitField("degree", 0.017453292519943295, None)
     val axisOne = new Axis("Geodetic longitude", "EAST")
     val axisTwo = new Axis("Geodetic latitude", "NORTH")
-    val expected = new Geogcs("Australian Antarctic (3D deg)", datum, primeM, unitField, Some(List(axisOne, axisTwo)), Some(auth))
+    val expected = new GeogCS("Australian Antarctic (3D deg)", datum, primeM, unitField, Some(List(axisOne, axisTwo)), Some(auth))
     val geo = """GEOGCS["Australian Antarctic (3D deg)", DATUM["Australian Antarctic Datum 1998", SPHEROID["GRS 1980", 6378137.0, 298.257222101, AUTHORITY["EPSG","7019"]], TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], AUTHORITY["EPSG","6176"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","61766413"]]"""
     parseAll(geogcs, geo) match {
       case Success(n, _) =>
@@ -374,7 +374,7 @@ class WKTParserTest extends FunSpec {
     val geogcsUnit = new UnitField("degree", 0.017453292519943295, None)
     val axisFirst = new Axis("Geodetic longitude", "EAST")
     val axisSecond = new Axis("Geodetic latitude", "NORTH")
-    val geogcs = new Geogcs("RGF93", datum, primeM, geogcsUnit, Some(List(axisFirst, axisSecond)), Some(geogcsAuth))
+    val geogcs = new GeogCS("RGF93", datum, primeM, geogcsUnit, Some(List(axisFirst, axisSecond)), Some(geogcsAuth))
     val projection = new Projection("Lambert_Conformal_Conic_2SP", Some(projectionAuth))
     val param1 = new Parameter("central_meridian", 3.0)
     val param2 = new Parameter("latitude_of_origin", 42.0)
@@ -388,7 +388,7 @@ class WKTParserTest extends FunSpec {
     val axisTwo = new Axis("Northing", "NORTH")
     val twins = new TwinAxis(axisOne, axisTwo)
     val paramsList = List(param1, param2, param3, param4, param5, param6, param7)
-    val expected = new Projcs("RGF93 / CC42", geogcs, projection, Some(paramsList), unitField, Some(twins), Some(projAuth))
+    val expected = new ProjCS("RGF93 / CC42", geogcs, projection, Some(paramsList), unitField, Some(twins), Some(projAuth))
     val projcsString = """PROJCS["RGF93 / CC42", GEOGCS["RGF93", DATUM["Reseau Geodesique Francais 1993", SPHEROID["GRS 1980", 6378137.0, 298.257222101, AUTHORITY["EPSG","7019"]], TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], AUTHORITY["EPSG","6171"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4171"]], PROJECTION["Lambert_Conformal_Conic_2SP", AUTHORITY["EPSG","9802"]], PARAMETER["central_meridian", 3.0], PARAMETER["latitude_of_origin", 42.0], PARAMETER["standard_parallel_1", 42.75], PARAMETER["false_easting", 1700000.0], PARAMETER["false_northing", 1200000.0], PARAMETER["scale_factor", 1.0], PARAMETER["standard_parallel_2", 41.25], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","3942"]]"""
     parseAll(projcs, projcsString) match {
       case Success(n, _) =>
@@ -453,7 +453,7 @@ class WKTParserTest extends FunSpec {
     val unitField = new UnitField("m", 1.0, None)
     val expected = new LocalCS("Tombak LNG plant", localDatum, unitField, axisList, Some(localAuth))
     val localCSString = """LOCAL_CS["Tombak LNG plant", LOCAL_DATUM["Tombak LNG plant", 0, AUTHORITY["EPSG","9314"]], UNIT["m", 1.0], AXIS["Plant East", EAST], AXIS["Plant North", WEST], AUTHORITY["EPSG","5817"]]"""
-    parseAll(localCS, localCSString) match {
+    parseAll(localcs, localCSString) match {
       case Success(n, _) =>
         assert(n == expected)
       case Failure(msg, _) =>
@@ -475,7 +475,7 @@ class WKTParserTest extends FunSpec {
     val axis2 = new Axis("Geocentric Y", "GEOCENTRIC_Y")
     val axis3 = new Axis("Geocentric Z", "GEOCENTRIC_Z")
     val auth = new Authority("EPSG","4079")
-    val expected = new Geoccs("REGCAN95", datum, primeM, unitField, Some(List(axis1, axis2, axis3)), Some(auth))
+    val expected = new GeocCS("REGCAN95", datum, primeM, unitField, Some(List(axis1, axis2, axis3)), Some(auth))
     val geoCCSString = """GEOCCS["REGCAN95", DATUM["Red Geodesica de Canarias 1995", SPHEROID["GRS 1980", 6378137.0, 298.257222101, AUTHORITY["EPSG","7019"]], TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], AUTHORITY["EPSG","1035"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["m", 1.0], AXIS["Geocentric X", GEOCENTRIC_X], AXIS["Geocentric Y", GEOCENTRIC_Y], AXIS["Geocentric Z", GEOCENTRIC_Z], AUTHORITY["EPSG","4079"]]"""
     parseAll(geoccs, geoCCSString) match {
       case Success(n, _) =>
@@ -499,7 +499,7 @@ class WKTParserTest extends FunSpec {
     val unitField = new UnitField("degree", 0.017453292519943295, None)
     val axis1 = new Axis("Geodetic latitude", "NORTH")
     val axis2 = new Axis("Geodetic longitude", "EAST")
-    val geogcs = new Geogcs("ETRS89", datum, primeM, unitField, Some(List(axis1, axis2)), Some(new Authority("EPSG","4258")))
+    val geogcs = new GeogCS("ETRS89", datum, primeM, unitField, Some(List(axis1, axis2)), Some(new Authority("EPSG","4258")))
     val projection = new Projection("Transverse_Mercator", Some(new Authority("EPSG","9807")))
     val param1 = new Parameter("central_meridian", 33.0)
     val param2 = new Parameter("latitude_of_origin", 0.0)
@@ -511,7 +511,7 @@ class WKTParserTest extends FunSpec {
     val axisProj2 = new Axis("Northing", "NORTH")
     val twinsProj = new TwinAxis(axisProj1, axisProj2)
     val authProj = new Authority("EPSG","25836")
-    val projcs = new Projcs("ETRS89 / UTM zone 36N", geogcs, projection, Some(paramsList), new UnitField("m", 1.0, None), Some(twinsProj), Some(authProj))
+    val projcs = new ProjCS("ETRS89 / UTM zone 36N", geogcs, projection, Some(paramsList), new UnitField("m", 1.0, None), Some(twinsProj), Some(authProj))
     val authGeoCCS = new Authority("EPSG","6176")
     val vertCSAuth = new Authority("EPSG","5776")
     val vertDatumAuth = new Authority("EPSG","5174")
@@ -544,7 +544,7 @@ class WKTParserTest extends FunSpec {
     val axis1 = new Axis("Geodetic longitude", "EAST")
     val axis2 = new Axis("Geodetic latitude", "NORTH")
     val authGeogcs = new Authority("EPSG","4220")
-    val geogcs = new Geogcs("Camacupa", datum, primeM, unitField, Some(List(axis1, axis2)), Some(authGeogcs))
+    val geogcs = new GeogCS("Camacupa", datum, primeM, unitField, Some(List(axis1, axis2)), Some(authGeogcs))
     val projection = new Projection("Transverse_Mercator", Some(new Authority("EPSG","9807")))
     val param1 = new Parameter("central_meridian", 15.0)
     val param2 = new Parameter("latitude_of_origin", 0.0)
@@ -555,7 +555,7 @@ class WKTParserTest extends FunSpec {
     val unitProj = new UnitField("m", 1.0, None)
     val axisProj1 = new Axis("Easting", "EAST")
     val axisProj2 = new Axis("Northing", "NORTH")
-    val expected = new Projcs("Camacupa / UTM zone 33S", geogcs, projection, Some(paramsList), unitProj, Some(new TwinAxis(axisProj1, axisProj2)), Some(authProjcs))
+    val expected = new ProjCS("Camacupa / UTM zone 33S", geogcs, projection, Some(paramsList), unitProj, Some(new TwinAxis(axisProj1, axisProj2)), Some(authProjcs))
     val projcsString = """PROJCS["Camacupa / UTM zone 33S", GEOGCS["Camacupa", DATUM["Camacupa", SPHEROID["Clarke 1880 (RGS)", 6378249.145, 293.465, AUTHORITY["EPSG","7012"]], TOWGS84[-50.9, -347.6, -231.0, 0.0, 0.0, 0.0, 0.0], AUTHORITY["EPSG","6220"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4220"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", 15.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 10000000.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","22033"]]"""
     parseAll(projcs, projcsString) match {
       case Success(n, _) =>
@@ -567,13 +567,13 @@ class WKTParserTest extends FunSpec {
   }
 
   it("Should contain NAD27 / Polar Stereographic / CM=-98") {
-    import WKTRegistry._
+    import WKT._
     val datSpheroid = new Spheroid("Clarke 1866", 6378206.4, 294.978698213901, None)
     val toWgs84 = new ToWgs84(List(-9, 151, 185))
     val datum = new Datum("North_American_Datum_1927", datSpheroid, Some(toWgs84), None)
     val primeM = new PrimeM("Greenwich", 0, None)
     val unitFieldGeo = new UnitField("degree", 0.0174532925199433, None)
-    val geogcs = new Geogcs("NAD27", datum, primeM, unitFieldGeo, None, None)
+    val geogcs = new GeogCS("NAD27", datum, primeM, unitFieldGeo, None, None)
     val projection = new Projection("Stereographic", None)
     val param1 = new Parameter("latitude_of_origin", 90)
     val param2 = new Parameter("central_meridian", -98.0)
@@ -582,13 +582,12 @@ class WKTParserTest extends FunSpec {
     val param5 = new Parameter("false_northing",0)
     val unitField = new UnitField("Meter", 1, None)
     val auth = new Authority("EPSG", "42301")
-    val expected = new Projcs("NAD27 / Polar Stereographic / CM=-98", geogcs, projection, Some(List(param1, param2, param3, param4, param5)), unitField, None, Some(auth))
-    parseWktEpsgResource()
-    assert(containsObject(expected))
+    val expected = new ProjCS("NAD27 / Polar Stereographic / CM=-98", geogcs, projection, Some(List(param1, param2, param3, param4, param5)), unitField, None, Some(auth))
+    assert(contains(expected))
   }
 
   it("Should return a contain the Geoccs object") {
-    import WKTRegistry._
+    import WKT._
     val spherAuth = new Authority("EPSG","7019")
     val spheroid = new Spheroid("GRS 1980", 6378137.0, 298.257222101, Some(spherAuth))
     val toWgs84 = new ToWgs84(List(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
@@ -600,13 +599,12 @@ class WKTParserTest extends FunSpec {
     val axis2 = new Axis("Geocentric Y", "GEOCENTRIC_Y")
     val axis3 = new Axis("Geocentric Z", "GEOCENTRIC_Z")
     val auth = new Authority("EPSG","4079")
-    val expected = new Geoccs("REGCAN95", datum, primeM, unitField, Some(List(axis1, axis2, axis3)), Some(auth))
-    parseWktEpsgResource()
-    assert(WKTRegistry.containsObject(expected))
+    val expected = new GeocCS("REGCAN95", datum, primeM, unitField, Some(List(axis1, axis2, axis3)), Some(auth))
+    assert(contains(expected))
   }
 
   it("Should parse NAD83(CSRS98) / New Brunswick Stereo") {
-    import WKTRegistry._
+    import WKT._
     val spherAuth = new Authority("EPSG","7019")
     val datumSpher = new Spheroid("GRS 1980", 6378137.0, 298.257222101, Some(spherAuth))
     val toWgs84 = new ToWgs84(List(0, 0, 0))
@@ -617,7 +615,7 @@ class WKTParserTest extends FunSpec {
     val unitAuth = new Authority("EPSG","9108")
     val unitField = new UnitField("degree", 0.0174532925199433, Some(unitAuth))
     val geoAuth = new Authority("EPSG","4140")
-    val geogcs = new Geogcs("NAD83(CSRS98)", geoDatum, primeM, unitField, None, Some(geoAuth))
+    val geogcs = new GeogCS("NAD83(CSRS98)", geoDatum, primeM, unitField, None, Some(geoAuth))
     val projection = new Projection("Oblique_Stereographic", None)
     val param1 = new Parameter("latitude_of_origin", 46.5)
     val param2 = new Parameter("central_meridian", -66.5)
@@ -627,9 +625,8 @@ class WKTParserTest extends FunSpec {
     val paramList = List(param1, param2, param3, param4, param5)
     val unitProj = new UnitField("metre", 1.0, Some(new Authority("EPSG", "9001")))
     val auth = new Authority("EPSG", "2036")
-    val expected = new Projcs("NAD83(CSRS98) / New Brunswick Stereo", geogcs, projection, Some(paramList), unitProj, None, Some(auth))
-    parseWktEpsgResource()
-    assert(containsObject(expected))
+    val expected = new ProjCS("NAD83(CSRS98) / New Brunswick Stereo", geogcs, projection, Some(paramList), unitProj, None, Some(auth))
+    assert(contains(expected))
   }
 
 }
