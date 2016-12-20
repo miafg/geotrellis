@@ -4,7 +4,7 @@ import scala.io.Source
 
 object WKTRegistry {
 
-  private var currentSet: scala.collection.mutable.Set[Tree] = scala.collection.mutable.Set.empty
+  private var espgWkt: scala.collection.mutable.Set[Tree] = scala.collection.mutable.Set.empty
 
   private val wktResourcePath = "/geotrellis/proj4/wkt/epsg.properties"
 
@@ -25,13 +25,13 @@ object WKTRegistry {
         val firstEquals = line.indexOf("=")
         val wktString = line.substring(firstEquals + 1)
         //parse the wkt string
-        currentSet += WKTParser(wktString)
+        espgWkt += WKTParser(wktString)
       }
     }
   }
 
   def containsObject(input: Tree): Boolean = {
-    currentSet contains input
+    espgWkt contains input
   }
 
 }
